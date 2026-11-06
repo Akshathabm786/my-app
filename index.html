@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="A little birthday surprise filled with memories, smiles and heartfelt wishes.">
+  <title>A Day Made for You | Happy Birthday</title>
+
+  <!-- CDNs for Bootstrap & Font-Awesome to ensure standalone preview works correctly -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.2/animate.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700;800&family=Pacifico&display=swap" rel="stylesheet">
+
+  <style>
+    :root { --pink:#f7a8b8; --rose:#d85f7b; --ink:#342b35; --cream:#fff9f6; }
+    html { scroll-behavior:smooth; }
+    body { font-family:'DM Sans',sans-serif; color:var(--ink); background:var(--cream); overflow-x:hidden; position:relative; }
+    h1,h2,h3,.navbar-brand { font-family:'Playfair Display',serif; }
+    .navbar { background:rgba(255,249,246,.96)!important; border:0!important; box-shadow:0 2px 18px #6b394015; }
+    .navbar-brand { color:var(--rose)!important; font-size:25px; }
+    .navbar-default .navbar-nav>li>a { color:var(--ink)!important; font-weight:700; letter-spacing:1px; }
+    .navbar-default .navbar-nav>li>a:hover { color:var(--rose)!important; }
+    
+    .birthday-hero {
+      min-height:100vh; display:flex; align-items:center; text-align:center; color:white;
+      background:linear-gradient(120deg,rgba(35,20,36,.62),rgba(121,43,77,.30)),
+      url('https://images.unsplash.com/photo-1530103862676-de8c9de?auto=format&fit=crop&w=2000&q=85') center/cover no-repeat;
+      padding:120px 0 90px;
+    }
+    .hero-kicker { text-transform:uppercase; letter-spacing:5px; font-size:13px; font-weight:700; }
+    .birthday-hero h1 { font-size:clamp(48px,8vw,92px); margin:20px 0; text-shadow:0 4px 20px #0005; }
+    .birthday-hero p { max-width:760px; margin:0 auto 30px; font-size:19px; line-height:1.8; }
+    .btn-birthday { display:inline-block; border-radius:40px; padding:14px 30px; background:var(--rose); color:white!important; border:0; font-weight:700; text-decoration:none!important; transition:.25s; }
+    .btn-birthday:hover { background:#b94765; transform:translateY(-3px); }
+    
+    .section-pad { padding:90px 0; }
+    .section-title { text-align:center; margin-bottom:48px; }
+    .section-title .eyebrow { color:var(--rose); text-transform:uppercase; letter-spacing:3px; font-size:12px; font-weight:700; }
+    .section-title h2 { font-size:42px; margin:12px 0; }
+    .section-title p { color:#796d77; max-width:650px; margin:0 auto; line-height:1.8; }
+    
+    .intro-card { background:white; border-radius:22px; padding:38px; box-shadow:0 15px 45px #60364b10; text-align:center; }
+    .intro-card .heart { color:var(--rose); font-size:35px; }
+    .intro-card p { font-size:17px; line-height:1.9; color:#6e626c; }
+    
+    .memory-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:22px; }
+    .memory-card { background:white; border-radius:18px; overflow:hidden; box-shadow:0 12px 35px #60364b12; transition:.3s; min-width:0; }
+    .memory-card:hover { transform:translateY(-7px); }
+    .memory-card img { width:100%; height:245px; object-fit:cover; display:block; }
+    .memory-card div { padding:22px; }
+    .memory-card h3 { font-size:22px; margin:0 0 9px; }
+    .memory-card p { color:#786d76; line-height:1.7; margin:0; }
+    
+    .wishes-section { background:#fff0f2; }
+    .wish-card { background:white; border-radius:18px; padding:28px; height:100%; margin-bottom:25px; box-shadow:0 10px 30px #60364b0c; }
+    .wish-card i { color:var(--rose); font-size:25px; margin-bottom:14px; }
+    .wish-card p { font-size:16px; line-height:1.8; color:#665b65; }
+    .wish-card h4 { font-weight:700; color:var(--rose); margin-bottom:0; }
+    
+    .quote-band { padding:90px 20px; text-align:center; color:white; background:linear-gradient(#3c2636b8,#3c2636b8),url('https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=1800&q=85') center/cover fixed; }
+    .quote-band h2 { font-size:clamp(30px,5vw,52px); max-width:900px; margin:0 auto 20px; line-height:1.35; }
+    .quote-band p { letter-spacing:2px; text-transform:uppercase; }
+    
+    .surprise-box { text-align:center; background:white; border-radius:24px; padding:45px 25px; box-shadow:0 15px 45px #60364b12; position:relative; overflow:hidden; }
+
+    /* Birthday gift stage & animation modifications */
+    .gift-stage { display:none; position:relative; width:280px; height:320px; margin:30px auto 5px; }
+    .gift-stage.visible { display:block; animation:giftAppear .7s ease both; }
+    @keyframes giftAppear { from { opacity:0; transform:scale(.65) translateY(25px); } to { opacity:1; transform:scale(1) translateY(0); } }
+    
+    .gift-glow { position:absolute; width:280px; height:250px; left:0px; bottom:10px; border-radius:50%; background:radial-gradient(ellipse,#ffd6e2 0%,rgba(255,214,226,0) 70%); opacity:0; transition:opacity 0.8s ease; }
+    .gift-stage.celebrating .gift-glow { opacity:1; animation:glowPulse .8s ease-in-out infinite alternate; }
+    .gift-stage.opened .gift-glow { opacity:1; transform:scale(1.4); }
+    @keyframes glowPulse { from { transform:scale(.85); opacity:.55; } to { transform:scale(1.15); opacity:1; } }
+
+    /* Gift Box styling & Smooth Disappear transition */
+    .gift-box { 
+      position:absolute; width:190px; height:145px; left:45px; bottom:25px; z-index:3; 
+      transition:opacity 0.8s ease, transform 0.8s ease;
+    }
+    .gift-base { position:absolute; left:0; bottom:0; width:190px; height:125px; border-radius:8px 8px 15px 15px; background:linear-gradient(135deg,#ff9db5,#d94f77); box-shadow:0 16px 28px #8c355033; }
+    .gift-base:before { content:""; position:absolute; left:78px; top:0; width:34px; height:100%; background:linear-gradient(90deg,#ffe9a6,#ffcf5c,#ffe9a6); }
+    .gift-base:after { content:""; position:absolute; left:0; top:22px; width:100%; height:19px; background:linear-gradient(#ffe9a6,#ffcf5c); }
+    .gift-lid { position:absolute; left:-10px; top:-8px; width:210px; height:38px; border-radius:8px; background:linear-gradient(135deg,#ffc0cf,#ec7090); transform-origin:18px 30px; transition:transform 1s cubic-bezier(.2,.8,.2,1); z-index:5; box-shadow:0 6px 12px #8c355033; }
+    .gift-lid:before { content:""; position:absolute; left:88px; top:0; width:34px; height:100%; background:linear-gradient(90deg,#ffe9a6,#ffcf5c,#ffe9a6); }
+    .gift-bow { position:absolute; left:76px; top:-40px; width:38px; height:34px; z-index:6; transition:transform 1s ease; }
+    .gift-bow:before,.gift-bow:after { content:""; position:absolute; width:28px; height:23px; border:8px solid #ffda78; border-radius:50% 50% 12% 50%; }
+    .gift-bow:before { left:-12px; transform:rotate(28deg); }
+    .gift-bow:after { right:-12px; transform:rotate(62deg) scaleX(-1); }
+
+    .gift-stage.celebrating .gift-box { animation:giftShake .55s ease-in-out infinite; }
+    @keyframes giftShake { 0%,100% { transform:rotate(0); } 25% { transform:rotate(-2deg) translateY(-3px); } 75% { transform:rotate(2deg) translateY(-3px); } }
+
+    /* FULL CAKE REVEAL: Gift box disappears, Cake scales up prominently */
+    .gift-stage.opened .gift-box {
+      opacity:0;
+      transform:scale(0.3) translateY(40px);
+      pointer-events:none;
+    }
+
+    .cake { 
+      position:absolute; z-index:4; width:180px; height:150px; left:50px; bottom:35px; opacity:0; 
+      transform:translateY(70px) scale(.4); 
+      transition:opacity 1s ease, transform 1.2s cubic-bezier(.175, .885, .32, 1.275); 
+    }
+
+    .gift-stage.opened .cake { 
+      opacity:1; 
+      transform:translateY(-15px) scale(1.25); 
+      transition-delay:.3s; 
+    }
+
+    .cake-layer { position:absolute; left:0; width:180px; height:46px; border-radius:14px 14px 10px 10px; background:linear-gradient(#fff4ec 0 38%,#ed7893 39% 100%); box-shadow:inset 0 -5px #d95c79; }
+    .cake-layer.middle { bottom:32px; }
+    .cake-layer.bottom { bottom:0; height:52px; background:linear-gradient(#fff4ec 0 35%,#d95c79 36% 100%); }
+    .cake-top { position:absolute; left:0; top:16px; width:180px; height:34px; border-radius:50%; background:#fff0e7; border-bottom:6px solid #f4a0ad; z-index:2; }
+    .cake-top:after { content:""; position:absolute; left:20px; top:15px; width:15px; height:14px; border-radius:0 0 10px 10px; background:#f58aa5; box-shadow:36px 2px #f58aa5,72px -1px #f58aa5,108px 2px #f58aa5, 144px 0 #f58aa5; }
+    .candle { position:absolute; z-index:5; left:84px; top:-26px; width:13px; height:46px; border-radius:3px; background:repeating-linear-gradient(135deg,#fff 0 6px,#8ec9d8 6px 12px); }
+    .flame { position:absolute; width:16px; height:24px; left:-1.5px; top:-23px; border-radius:50% 50% 50% 0; background:#ffb52e; transform:rotate(-45deg); box-shadow:0 0 22px #ffb52edd; animation:flameFlicker .65s infinite alternate; }
+    @keyframes flameFlicker { from { transform:rotate(-45deg) scale(.88); } to { transform:rotate(-42deg) scale(1.15); } }
+
+    .gift-status { min-height:28px; margin:12px auto 0; color:#a45b70; font-weight:600; font-size:17px; }
+    .confetti-piece { position:absolute; top:-25px; width:10px; height:16px; z-index:10; opacity:0; pointer-events:none; animation:confettiFall 3.8s linear forwards; }
+    @keyframes confettiFall { 0% { opacity:1; transform:translate3d(0,-10px,0) rotate(0); } 100% { opacity:0; transform:translate3d(var(--drift),360px,0) rotate(760deg); } }
+    
+    .sparkle { position:absolute; z-index:1; color:#f5b72f; font-size:25px; animation:sparklePop 1s ease-in-out infinite alternate; }
+    @keyframes sparklePop { from { opacity:.25; transform:scale(.65) rotate(0); } to { opacity:1; transform:scale(1.3) rotate(25deg); } }
+    
+    #surpriseMessage { display:none; opacity:0; margin:35px auto 0; max-width:700px; color:var(--rose); font-family:'Playfair Display',serif; font-size:clamp(23px,4vw,34px); line-height:1.5; transition:opacity .8s ease; }
+    #surpriseMessage.show { display:block; opacity:1; }
+
+    /* Animated Floating Messages Styling */
+    .floating-msg {
+      position: fixed;
+      z-index: 9999;
+      font-family: 'Pacifico', 'Playfair Display', cursive, serif;
+      font-weight: 700;
+      pointer-events: none;
+      white-space: nowrap;
+      text-shadow: 0 4px 15px rgba(216, 95, 123, 0.4);
+      animation: floatFadeUp 4.5s ease-in-out forwards;
+      opacity: 0;
+    }
+    @keyframes floatFadeUp {
+      0% {
+        opacity: 0;
+        transform: translateY(30px) scale(0.8) rotate(-5deg);
+      }
+      15% {
+        opacity: 1;
+        transform: translateY(0px) scale(1.1) rotate(0deg);
+      }
+      80% {
+        opacity: 0.95;
+        transform: translateY(-80px) scale(1.05) rotate(3deg);
+      }
+      100% {
+        opacity: 0;
+        transform: translateY(-130px) scale(0.9) rotate(5deg);
+      }
+    }
+
+    footer { background:#302532; color:#eee; text-align:center; padding:45px 15px; }
+    footer h2 { color:#f7b2c1; }
+    footer p { color:#d9cdd5; }
+    .floating-heart { color:#f7a8b8; margin:0 5px; }
+
+    @media(max-width:991px) {
+      .memory-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+    }
+    @media(max-width:767px) {
+      .section-pad { padding:65px 0; }
+      .section-title h2 { font-size:34px; }
+      .memory-grid { grid-template-columns:1fr; }
+      .memory-card img { height:230px; }
+      .intro-card { padding:27px 22px; }
+      .quote-band { background-attachment:scroll; }
+      .gift-stage { transform:scale(.95); margin-bottom:10px; }
+    }
+  </style>
+</head>
+<body>
+
+  <section class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse" aria-label="Toggle navigation">
+          <span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span>
+        </button>
+        <a href="#home" class="navbar-brand">A DAY FOR YOU <span class="floating-heart">♥</span></a>
+      </div>
+      <div class="collapse navbar-collapse">
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href="#home" class="smoothScroll">HOME</a></li>
+          <li><a href="#message" class="smoothScroll">A NOTE FOR YOU</a></li>
+          <li><a href="#memories" class="smoothScroll">GOOD THINGS</a></li>
+          <li><a href="#wishes" class="smoothScroll">WISHES</a></li>
+          <li><a href="#surprise" class="smoothScroll">SURPRISE</a></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="home" class="birthday-hero">
+    <div class="container">
+      <div class="row"><div class="col-md-12">
+        <div class="hero-kicker">Today is all about celebrating you NITK</div>
+        <h1>Happy Birthday Darsh!</h1>
+        <p>May your day be filled with warm hugs, genuine laughter, lovely surprises and memories that make you smile long after today is over.</p>
+        <a href="#message" class="btn-birthday smoothScroll">A little note for you <i class="fa fa-heart"></i></a>
+      </div></div>
+    </div>
+  </section>
+
+  <section id="message" class="section-pad">
+    <div class="container">
+      <div class="section-title">
+        <div class="eyebrow">A little something from the heart</div>
+        <h2>You Make My Life Brighter</h2>
+        <p>Some people make ordinary days feel special just by being themselves. This page is a small reminder of how wonderful you are. ❤️ How you made my life joyable in begining of our banglore days to till today. You made my everyday great & special. Just your presence gave me a comfort, strength, knlowedge, happiness. You are my friend, lover, gaurdian, saver, teacher, care taker, protector, FUCKER.....YOU are my everything </p>
+        <p style="font-size: 30px; margin-top:10px;">❤️💛🤍💚💙💜🧡🩷🤎🩵🖤</p>
+      </div>
+      <div class="intro-card">
+        <div class="heart"><i class="fa fa-heart"></i></div>
+        <p>On your special day, I hope you pause for a moment and see yourself the way the I, who care about you see you: someone worth celebrating, someone who brings light into other people's lives, and someone with so much happiness still waiting ahead.</p>
+        <p><strong>May this new chapter bring you peace in your heart, courage for your dreams, success for your efforts & countless reasons to smile.</strong></p>
+        <p>Keep being wonderfully you. The world is better & best with you in it. ❤️</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="memories" class="section-pad" style="background:#fff;">
+    <div class="container">
+      <div class="section-title">
+        <div class="eyebrow">Little moments, big happiness</div>
+        <h2>Things Worth Celebrating</h2>
+        <p>A birthday is more than a date. It's a celebration of every smile, every lesson, every adventure and every beautiful moment still to come.</p>
+      </div>
+      <div class="memory-grid">
+        <article class="memory-card">
+          <img src="images/my-photo1.jpg" alt="Our memory 1">
+          <div><h3>Beautiful Memories ❤️</h3><p>Every moment with you is special and unforgettable.</p></div>
+        </article>
+        <article class="memory-card">
+          <img src="images/my-photo2.jpg" alt="Our memory 2">
+          <div><h3>Special Moments 💕</h3><p>Some memories will stay in our hearts forever.</p></div>
+        </article>
+        <article class="memory-card">
+          <img src="images/my-photo3.jpg" alt="Our memory 3">
+          <div><h3>My Favourite Person ❤️</h3><p>Life becomes more beautiful with you around.</p></div>
+        </article>
+        <article class="memory-card">
+          <img src="images/my-photo4.jpg" alt="Our memory 4">
+          <div><h3>Forever Together 💖</h3><p>Here's to many more memories together.</p></div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="wishes" class="section-pad wishes-section">
+    <div class="container">
+      <div class="section-title">
+        <div class="eyebrow">Wishes for your new year</div>
+        <h2>From the Heart</h2>
+        <p>Not just birthday words — little hopes for all the days waiting ahead.</p>
+      </div>
+      <div class="row">
+        <div class="col-md-4 col-sm-6"><div class="wish-card"><i class="fa fa-sun-o"></i><p>May your mornings begin with hope, your days bring purpose and your nights end with a grateful heart.</p><h4>More happiness</h4></div></div>
+        <div class="col-md-4 col-sm-6"><div class="wish-card"><i class="fa fa-star"></i><p>May you never run out of dreams to chase or courage to take the first step towards them.</p><h4>Bigger dreams</h4></div></div>
+        <div class="col-md-4 col-sm-6"><div class="wish-card"><i class="fa fa-heart"></i><p>May you receive the same kindness, warmth and love that you so generously give to others.</p><h4>Endless love</h4></div></div>
+        <div class="col-md-4 col-sm-6"><div class="wish-card"><i class="fa fa-leaf"></i><p>May you grow through every experience and find beauty even in life's unexpected turns.</p><h4>Peace & growth</h4></div></div>
+        <div class="col-md-4 col-sm-6"><div class="wish-card"><i class="fa fa-trophy"></i><p>May your hard work lead to success and may every achievement remind you how capable you are.</p><h4>Great success</h4></div></div>
+        <div class="col-md-4 col-sm-6"><div class="wish-card"><i class="fa fa-smile-o"></i><p>And above everything, may you always have a reason to laugh, a place to belong and people to call yours.</p><h4>Beautiful memories</h4></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="quote-band">
+    <h2>“Count your life by smiles, not tears. Count your age by friends, not years.”</h2>
+    <p>Here's to another wonderful chapter</p>
+  </section>
+
+  <section id="surprise" class="section-pad">
+    <div class="container">
+      <div class="surprise-box">
+        <div class="section-title" style="margin-bottom:25px;">
+          <div class="eyebrow">One last little surprise</div>
+          <h2>There's a Wish Just for You!</h2>
+          <p>Tap the button to reveal your birthday message.</p>
+        </div>
+        <button type="button" class="btn-birthday" id="revealButton">Your Birthday Gift <i class="fa fa-gift"></i></button>
+        <p class="gift-status" id="giftStatus" aria-live="polite"></p>
+        <div class="gift-stage" id="giftStage" aria-label="A birthday gift box with a cake inside">
+          <div class="gift-glow"></div>
+          <span class="sparkle" style="left:5px;top:55px;">✦</span>
+          <span class="sparkle" style="right:8px;top:90px;animation-delay:.3s;">✧</span>
+          <span class="sparkle" style="left:28px;top:180px;animation-delay:.6s;">✦</span>
+          <span class="sparkle" style="right:25px;top:195px;animation-delay:.2s;">✧</span>
+          
+          <!-- Full Cake -->
+          <div class="cake" aria-hidden="true">
+            <div class="candle"><span class="flame"></span></div>
+            <div class="cake-top"></div>
+            <div class="cake-layer middle"></div>
+            <div class="cake-layer bottom"></div>
+          </div>
+          
+          <!-- Gift Box (Fades out on open) -->
+          <div class="gift-box" aria-hidden="true">
+            <div class="gift-lid"></div>
+            <div class="gift-bow"></div>
+            <div class="gift-base"></div>
+          </div>
+        </div>
+        <div id="surpriseMessage" aria-live="polite">You deserve all the beautiful things this life has to offer. Keep shining, keep smiling, and never forget how special you are. Happy Birthday! ❤️🎂</div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      <h2>Happy Birthday <span class="floating-heart">♥</span></h2>
+      <p>May your day be as lovely, bright and unforgettable as you are.</p>
+      <p>Made with <i class="fa fa-heart" style="color:#f7a8b8;"></i> and lots of good wishes.</p>
+      <h2 class="glitter-text">
+    I will always stand by you and next to you
+    #Never ever think that you are alone
+</h2>
+
+<style>
+.glitter-text {
+    color: white;
+    text-align: center;
+    font-weight: bold;
+    text-shadow:
+        0 0 5px white,
+        0 0 10px #fff,
+        0 0 20px #ffd700,
+        0 0 30px #ffffff;
+    animation: glitter 2s infinite alternate;
+}
+
+@keyframes glitter {
+    from {
+        text-shadow:
+            0 0 5px white,
+            0 0 10px white,
+            0 0 15px gold;
+    }
+    to {
+        text-shadow:
+            0 0 10px white,
+            0 0 20px #ffd700,
+            0 0 30px white,
+            0 0 40px pink;
+    }
+}
+</style>
+      <h2>Last but not least, I don't know how and what words i should use to thank you for choosing me</h2>
+      <h1>Infinite thanks ✨</h1>
+      <h1 class="love-text">I 💞 YOU</h1>
+
+<style>
+.love-text {
+    font-size: 65px;
+    font-weight: bold;
+    text-align: center;
+    color: #fff;
+    text-shadow:
+        0 0 5px #fff,
+        0 0 10px #ff69b4,
+        0 0 20px #ff1493,
+        0 0 40px #ff69b4;
+    animation: loveGlow 1.5s ease-in-out infinite alternate,
+               floatLove 3s ease-in-out infinite;
+}
+
+@keyframes loveGlow {
+    from {
+        text-shadow: 0 0 5px white, 0 0 15px hotpink;
+    }
+    to {
+        text-shadow: 0 0 15px white, 0 0 30px deeppink,
+                     0 0 50px hotpink;
+    }
+}
+
+@keyframes floatLove {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-12px); }
+}
+</style>			
+      <p>© <span id="year"></span> A Day Made for You</p>
+    </div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Messages to pop up gradually
+    var popMessages = [
+      "happy birthday 🎂",
+      "NITK love ❤️",
+      "Love u forever 💞",
+      "happy everyday ✨",
+      "Fuck You forever 🎉"
+    ];
+
+    // Colors for pop up text
+    var popColors = ['#d85f7b', '#e63946', '#ff4d6d', '#9d4edd', '#d94f77', '#c77dff'];
+
+    function spawnFloatingMessage(text) {
+      var msgEl = document.createElement('div');
+      msgEl.className = 'floating-msg';
+      msgEl.textContent = text;
+      
+      // Randomize font size and placement across screen
+      var fontSize = Math.floor(Math.random() * 16) + 26; // 26px to 42px
+      var posX = Math.floor(Math.random() * 70) + 15; // 15% to 85% width
+      var posY = Math.floor(Math.random() * 40) + 40; // 40% to 80% height
+      var color = popColors[Math.floor(Math.random() * popColors.length)];
+
+      msgEl.style.fontSize = fontSize + 'px';
+      msgEl.style.left = posX + '%';
+      msgEl.style.top = posY + '%';
+      msgEl.style.color = color;
+
+      document.body.appendChild(msgEl);
+
+      // Clean up after animation finishes
+      setTimeout(function () {
+        msgEl.remove();
+      }, 4500);
+    }
+
+    function triggerPopUpSequence() {
+      // Trigger each message gradually with delays
+      popMessages.forEach(function(msg, index) {
+        setTimeout(function() {
+          spawnFloatingMessage(msg);
+        }, index * 900);
+      });
+
+      // Keep spawning messages periodically after the first round
+      var loopCount = 0;
+      var interval = setInterval(function() {
+        var randomMsg = popMessages[Math.floor(Math.random() * popMessages.length)];
+        spawnFloatingMessage(randomMsg);
+        loopCount++;
+        if(loopCount > 10) {
+          clearInterval(interval);
+        }
+      }, 1800);
+    }
+
+    document.getElementById('revealButton').addEventListener('click', function () {
+      var button = this;
+      var gift = document.getElementById('giftStage');
+      var status = document.getElementById('giftStatus');
+      var message = document.getElementById('surpriseMessage');
+      var surpriseBox = document.querySelector('.surprise-box');
+
+      button.style.display = 'none';
+      gift.classList.add('visible', 'celebrating');
+      status.textContent = 'A little magic is on its way... get ready! 🎉';
+
+      // Confetti animation during countdown
+      var colours = ['#f36f91', '#ffd166', '#8ecae6', '#b8de6f', '#c7a4e0', '#ff9f68'];
+      var confettiTimer = setInterval(function () {
+        for (var i = 0; i < 18; i++) {
+          var piece = document.createElement('span');
+          piece.className = 'confetti-piece';
+          piece.style.left = (Math.random() * 100) + '%';
+          piece.style.backgroundColor = colours[Math.floor(Math.random() * colours.length)];
+          piece.style.setProperty('--drift', ((Math.random() - 0.5) * 180) + 'px');
+          piece.style.animationDuration = (2.5 + Math.random() * 1.5) + 's';
+          surpriseBox.appendChild(piece);
+          (function (el) { setTimeout(function () { el.remove(); }, 4500); })(piece);
+        }
+      }, 450);
+
+      // Open reveal after 4 seconds
+      setTimeout(function () {
+        clearInterval(confettiTimer);
+        gift.classList.remove('celebrating');
+        
+        // Gift box disappears and Full Cake appears via CSS transition
+        gift.classList.add('opened');
+        
+        status.textContent = 'SURPRISE! Your birthday cake is here! 🎂✨';
+
+        // Trigger floating text messages gradually
+        triggerPopUpSequence();
+
+        setTimeout(function () {
+          message.classList.add('show');
+        }, 950);
+      }, 4000);
+    });
+  </script>
+</body>
+</html>
